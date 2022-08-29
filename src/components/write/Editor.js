@@ -1,8 +1,10 @@
 import Quill from "quill";
 import "quill/dist/quill.bubble.css";
 import { useCallback, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import palette from "../../lib/style/palette";
+import { initialize } from "../../modules/writeSlice";
 import Responsive from "../common/Responsive";
 
 const EditorBlock = styled(Responsive)`
@@ -32,7 +34,8 @@ const QuillWrapper = styled.div`
   }
 `;
 
-const Editor = ({ onChangeField }) => {
+const Editor = ({ onChangeField, name, description }) => {
+  const dispatch = useDispatch();
   const quillElement = useRef(null);
   const quillInstance = useRef(null);
 
@@ -55,6 +58,13 @@ const Editor = ({ onChangeField }) => {
     });
   }, [onChangeField]);
 
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+    quillInstance.current.root.innerHTML = description;
+  }, [description]);
+
   const onChangeTitle = useCallback(
     (e) => {
       onChangeField({ key: "name", value: e.target.value });
@@ -62,11 +72,18 @@ const Editor = ({ onChangeField }) => {
     [onChangeField]
   );
 
+  useEffect(() => {
+    return () => {
+      dispatch(initialize());
+    };
+  }, [dispatch]);
+
   return (
     <EditorBlock>
       <TitleInput
         placeholder="도시 이름을 입력하세요"
         onChange={onChangeTitle}
+        value={name}
       />
       <QuillWrapper>
         <div ref={quillElement} />

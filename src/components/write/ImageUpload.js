@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import palette from "../../lib/style/palette";
 import Button from "../common/Button";
+import { ImageBlock } from "../common/ImageBlock";
 
 const ImageUploadBlock = styled.div`
   width: 100%;
@@ -10,21 +11,7 @@ const ImageUploadBlock = styled.div`
   border-top: 1px solid ${palette.gray[2]};
 `;
 
-const ImagePreviewBlock = styled.div`
-  width: 200px !important;
-  height: 140px;
-  margin-top: 16px;
-  border-radius: 16px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 16px;
-  }
-`;
-
-const ImageUpload = ({ onChangeField }) => {
+const ImageUpload = ({ onChangeField, image }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const fileInput = useRef();
 
@@ -63,10 +50,10 @@ const ImageUpload = ({ onChangeField }) => {
         onChange={onChange}
         accept="image/*"
       />
-      {imageSrc && (
-        <ImagePreviewBlock>
-          <img src={imageSrc} alt="preview" />
-        </ImagePreviewBlock>
+      {image && (
+        <ImageBlock>
+          <img src={image} alt="preview" />
+        </ImageBlock>
       )}
     </ImageUploadBlock>
   );

@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import palette from "../../lib/style/palette";
 import { getPosts } from "../../modules/postsSlice";
 import Button from "../common/Button";
+import { ImageBlock } from "../common/ImageBlock";
 import Tags from "../common/Tags";
 
 const PostListBlock = styled.div`
@@ -45,40 +46,32 @@ const PostItemBlock = styled.div`
   }
 `;
 
-const ImageBlock = styled.div`
-  width: 200px !important;
-  height: 140px;
+const StyledImageBlock = styled(ImageBlock)`
+  margin: 0;
   margin-right: 16px;
-  border-radius: 16px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 16px;
-    border: 1px solid ${palette.gray[4]};
-  }
 `;
 
 const ContentBlock = styled.div`
   flex: 1;
 `;
 
-const PostItem = ({ post }) => {
+const PostItem = ({ post, city }) => {
   const { id, name, description, tags, image } = post;
 
   return (
     <PostItemBlock>
-      <ImageBlock>
+      <StyledImageBlock>
         <img
           src={
             image ? image : "http://contest.wowtv.co.kr/src/images/noImg.gif"
           }
           alt={name}
         />
-      </ImageBlock>
+      </StyledImageBlock>
       <ContentBlock>
-        <h2>{name}</h2>
+        <h2>
+          <Link to={`/${city}/${id}`}>{name}</Link>
+        </h2>
         <Tags tags={tags} />
         <p>{description}</p>
       </ContentBlock>
@@ -102,7 +95,8 @@ const PostList = () => {
           새 글 작성하기
         </Button>
       </WritePostButtonWrapper>
-      {posts && posts.map((post) => <PostItem post={post} key={post.id} />)}
+      {posts &&
+        posts.map((post) => <PostItem post={post} key={post.id} city={city} />)}
     </PostListBlock>
   );
 };

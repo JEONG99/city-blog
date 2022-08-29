@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { changeField } from "../../modules/writeSlice";
@@ -8,22 +8,21 @@ import Editor from "./Editor";
 import ImageUpload from "./ImageUpload";
 import TagBox from "./TagBox";
 import WriteActionButton from "./WriteActionButton";
+import CountryName from "../common/CountryName";
 
-const CountryNameBlock = styled.div`
-  width: 100%;
-  padding-left: 16px;
-  padding-right: 16px;
-  margin-top: 50px;
-  h1 {
-    font-size: 48px;
-    font-weight: 700;
-    margin: 0;
-  }
+const WriteViewerBlock = styled(Responsive)`
+  margin-top: 64px;
 `;
 
 const WriteViewer = () => {
   const dispatch = useDispatch();
   const { city } = useParams();
+  const { name, description, tags, image } = useSelector(({ write }) => ({
+    name: write.name,
+    description: write.description,
+    tags: write.tags,
+    image: write.image,
+  }));
 
   const onChangeField = useCallback(
     (payload) => {
@@ -33,15 +32,19 @@ const WriteViewer = () => {
   );
 
   return (
-    <Responsive>
-      <CountryNameBlock>
+    <WriteViewerBlock>
+      <CountryName>
         <h1>{city.toUpperCase()}</h1>
-      </CountryNameBlock>
-      <Editor onChangeField={onChangeField} />
-      <ImageUpload onChangeField={onChangeField} />
-      <TagBox onChangeField={onChangeField} />
+      </CountryName>
+      <Editor
+        onChangeField={onChangeField}
+        name={name}
+        description={description}
+      />
+      <ImageUpload onChangeField={onChangeField} image={image} />
+      <TagBox onChangeField={onChangeField} tags={tags} />
       <WriteActionButton city={city} />
-    </Responsive>
+    </WriteViewerBlock>
   );
 };
 

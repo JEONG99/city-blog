@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import palette from "../../lib/style/palette";
 
@@ -68,7 +68,7 @@ const TagList = ({ tags, onRemove }) => {
   );
 };
 
-const TagBox = ({ onChangeField }) => {
+const TagBox = ({ onChangeField, tags }) => {
   const [localTags, setLocalTags] = useState([]);
   const [input, setInput] = useState("");
 
@@ -104,6 +104,10 @@ const TagBox = ({ onChangeField }) => {
     },
     [localTags, onChangeField]
   );
+
+  useEffect(() => {
+    setLocalTags(tags);
+  }, [tags]);
 
   return (
     <TagBoxBlock>

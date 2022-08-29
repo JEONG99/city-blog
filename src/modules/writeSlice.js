@@ -9,34 +9,79 @@ export const writePost = createAsyncThunk(
   }
 );
 
+export const updatePost = createAsyncThunk(
+  "UPDATE_POST",
+  async ({ city, originalPostId, newPost }) => {
+    const response = await axios.put(
+      `http://localhost:8000/${city}/${originalPostId}`,
+      newPost
+    );
+    return { post: { ...newPost, id: originalPostId }, response };
+  }
+);
+
 const initialState = {
+  id: null,
   name: "",
   description: "",
   image: "",
   tags: [],
+  post: null,
+  postError: null,
 };
 
 const writeSlice = createSlice({
   name: "write",
   initialState,
   reducers: {
+    initialize: (state) => initialState,
     changeField: (state, { payload: { key, value } }) => {
       return {
         ...state,
         [key]: value,
       };
     },
+    setOriginalPost: (
+      state,
+      { payload: { id, name, description, tags, image } }
+    ) => {
+      return {
+        ...state,
+        id,
+        name,
+        description,
+        tags,
+        image,
+      };
+    },
   },
   extraReducers: {
-    [writePost.fulfilled]: () => {
-      console.log("포스트 등록 성공");
-      return initialState;
+    [writePost.fulfilled]: (state, { payload }) => {
+      return {
+        ...state,
+        post: payload,
+      };
     },
-    [writePost.rejected]: (_, { payload }) => {
-      console.log("포스트 등록 실패 : ", payload);
+    [writePost.rejected]: (state, { payload }) => {
+      return {
+        ...state,
+        postError: payload,
+      };
+    },
+    [updatePost.fulfilled]: (state, { payload: { post } }) => {
+      return {
+        ...state,
+        post,
+      };
+    },
+    [updatePost.rejected]: (state, { payload }) => {
+      return {
+        ...state,
+        postError: payload,
+      };
     },
   },
 });
 
-export const { changeField } = writeSlice.actions;
+export const { initialize, changeField, setOriginalPost } = writeSlice.actions;
 export default writeSlice.reducer;
